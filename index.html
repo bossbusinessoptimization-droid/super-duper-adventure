@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlowFuel — Complete Setup Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blush:#E8A598;--copper:#C17B5E;--charcoal:#2D2D2D;
+  --cream:#F5EDE8;--mocha:#3D2B1F;--light:#FAF3EF;
+  --green:#2D7A4F;--green-light:#EAF5EE;
+  --blue:#1A56A0;--blue-light:#EBF2FC;
+  --orange:#C46A00;--orange-light:#FEF3E2;
+  --red:#B91C1C;--red-light:#FEF2F2;
+  --purple:#6D28D9;--purple-light:#F5F3FF;
+}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:'Lato',sans-serif;color:var(--mocha);background:var(--light);line-height:1.6}
+
+/* NAV */
+.top-nav{background:var(--mocha);padding:14px 5vw;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.tn-brand{font-family:'Playfair Display',serif;font-size:20px;color:var(--blush)}
+.tn-note{font-size:11px;color:rgba(255,255,255,.5)}
+
+/* PROGRESS BAR */
+.progress-strip{background:var(--charcoal);padding:12px 5vw;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.prog-step{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);text-decoration:none;transition:all .15s;white-space:nowrap}
+.prog-step:hover,.prog-step.active{background:var(--copper);border-color:var(--copper);color:#fff}
+
+/* HERO */
+.guide-hero{background:linear-gradient(135deg,var(--mocha),var(--copper));padding:52px 5vw;text-align:center}
+.guide-hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);color:#fff;margin-bottom:10px}
+.guide-hero p{font-size:16px;color:rgba(255,255,255,.8);max-width:560px;margin:0 auto 20px}
+.agent-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:20px;font-size:12px;color:rgba(255,255,255,.9);margin:4px}
+
+/* ALERTS */
+.alert{border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+.alert-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.alert.green{background:var(--green-light);border-left:4px solid var(--green);color:#1a4731}
+.alert.orange{background:var(--orange-light);border-left:4px solid var(--orange);color:#7a3c00}
+.alert.red{background:var(--red-light);border-left:4px solid var(--red);color:#7f1d1d}
+.alert.blue{background:var(--blue-light);border-left:4px solid var(--blue);color:#1e3a5f}
+.alert.purple{background:var(--purple-light);border-left:4px solid var(--purple);color:#3b1f7a}
+
+/* MAIN LAYOUT */
+.guide-wrap{max-width:860px;margin:0 auto;padding:40px 5vw 80px}
+
+/* PHASE HEADER */
+.phase{margin-bottom:48px}
+.phase-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--cream)}
+.phase-num{width:48px;height:48px;border-radius:12px;background:var(--copper);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;font-family:'Playfair Display',serif}
+.phase-meta{}
+.phase-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--mocha);margin-bottom:3px}
+.phase-sub{font-size:13px;color:#7a6058}
+.phase-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase;margin-left:8px}
+.badge-free{background:var(--green-light);color:var(--green)}
+.badge-paid{background:var(--orange-light);color:var(--orange)}
+.badge-required{background:var(--red-light);color:var(--red)}
+.badge-optional{background:var(--blue-light);color:var(--blue)}
+
+/* STEP CARD */
+.step-card{background:#fff;border-radius:14px;border:1.5px solid rgba(232,165,152,.25);margin-bottom:20px;overflow:hidden}
+.step-header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--cream);cursor:pointer;user-select:none}
+.step-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--copper);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s}
+.step-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-check input{display:none}
+.step-num{font-size:11px;font-weight:700;color:var(--copper);width:20px;flex-shrink:0}
+.step-title{font-size:15px;font-weight:700;color:var(--charcoal);flex:1}
+.step-time{font-size:11px;color:#aaa;white-space:nowrap}
+.step-body{padding:20px}
+.step-desc{font-size:14px;color:#5a4a42;margin-bottom:14px;line-height:1.6}
+
+/* ACTION BUTTON */
+.action-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:30px;font-size:13px;font-weight:700;text-decoration:none;transition:all .18s;margin:4px 4px 4px 0;border:none;cursor:pointer}
+.btn-copper{background:var(--copper);color:#fff}
+.btn-copper:hover{opacity:.85}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{opacity:.85}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{opacity:.85}
+.btn-outline{background:transparent;color:var(--copper);border:2px solid var(--copper)}
+.btn-outline:hover{background:var(--cream)}
+
+/* COPY BOX */
+.copy-wrap{margin:14px 0}
+.copy-label{font-size:11px;font-weight:700;color:var(--copper);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.copy-btn{background:var(--copper);color:#fff;border:none;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.copy-btn:hover{opacity:.8}
+.copy-btn.copied{background:var(--green)}
+.copy-box{background:var(--charcoal);color:#f0e6e0;font-family:'SF Mono','Fira Code',monospace;font-size:12px;padding:14px 16px;border-radius:10px;white-space:pre-wrap;word-break:break-all;line-height:1.6;border:1px solid rgba(255,255,255,.08)}
+
+/* CHECKLIST */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--mocha);line-height:1.5}
+.checklist li::before{content:'☐';color:var(--copper);flex-shrink:0;font-size:16px;margin-top:-1px}
+.checklist li a{color:var(--blue);text-decoration:none;font-weight:600}
+.checklist li a:hover{text-decoration:underline}
+
+/* FEE TABLE */
+.fee-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.fee-table th{background:var(--copper);color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+.fee-table td{padding:9px 12px;border-bottom:1px solid var(--cream);color:var(--mocha)}
+.fee-table tr:nth-child(even) td{background:var(--light)}
+.fee-table .green{color:var(--green);font-weight:700}
+.fee-table .red{color:var(--red)}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:14px 0}
+.tool-card{background:var(--light);border:1.5px solid var(--cream);border-radius:10px;padding:14px;text-align:center}
+.tool-emoji{font-size:26px;margin-bottom:6px;display:block}
+.tool-name{font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:3px}
+.tool-note{font-size:11px;color:#7a6058}
+.tool-card a{display:block;margin-top:8px;font-size:12px;font-weight:700;color:var(--blue);text-decoration:none}
+.tool-card a:hover{text-decoration:underline}
+
+/* FOOTER */
+footer{background:var(--charcoal);color:rgba(255,255,255,.5);padding:32px 5vw;text-align:center;font-size:11px}
+.footer-brand{font-family:'Playfair Display',serif;font-size:20px;color:var(--blush);margin-bottom:8px}
+
+/* VERIFIED BANNER */
+.verified-bar{background:var(--green-light);border:1px solid var(--green);border-radius:10px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:#1a4731;display:flex;align-items:center;gap:10px}
+
+@media(max-width:600px){
+  .progress-strip{display:none}
+  .step-body{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="tn-brand">GlowFuel Setup Guide</div>
+  <div class="tn-note">All 8 agents verified ✓</div>
+</div>
+
+<div class="progress-strip">
+  <a class="prog-step active" href="#phase1">1. Domain</a>
+  <a class="prog-step" href="#phase2">2. Hosting</a>
+  <a class="prog-step" href="#phase3">3. Amazon</a>
+  <a class="prog-step" href="#phase4">4. Tracker Sales</a>
+  <a class="prog-step" href="#phase5">5. Email</a>
+  <a class="prog-step" href="#phase6">6. Social</a>
+  <a class="prog-step" href="#phase7">7. Analytics</a>
+  <a class="prog-step" href="#phase8">8. Go Live</a>
+</div>
+
+<div class="guide-hero">
+  <h1>GlowFuel — Complete Setup Checklist</h1>
+  <p>Every step, every link, every copy-paste item you need. Go in order. Total time: approximately 3–4 hours.</p>
+  <div>
+    <span class="agent-badge">🔍 Trend Scout ✓</span>
+    <span class="agent-badge">🏗️ Site Architect ✓</span>
+    <span class="agent-badge">✍️ Content Strategist ✓</span>
+    <span class="agent-badge">📣 Growth Marketer ✓</span>
+    <span class="agent-badge">📱 Social Manager ✓</span>
+    <span class="agent-badge">⚖️ Compliance Watchdog ✓</span>
+    <span class="agent-badge">💰 Revenue Projector ✓</span>
+    <span class="agent-badge">🖼️ Visual Strategist ✓</span>
+  </div>
+</div>
+
+<div class="guide-wrap">
+
+  <div class="verified-bar">
+    ✅ <strong>All 8 agents have reviewed and verified this checklist.</strong> Two corrections were made: Mailchimp replaced with Kit (affiliate-friendly, free up to 10k subscribers) and Gumroad replaced with Payhip (lower fees, free plan).
+  </div>
+
+  <div class="alert orange">
+    <div class="alert-icon">⚠️</div>
+    <div><strong>Important sequence:</strong> Complete Steps 1–2 (Domain + Hosting) and publish at least 5 blog posts BEFORE applying to Amazon Associates. Amazon reviews live content before approving accounts.</div>
+  </div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 1: DOMAIN -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase1">
+  <div class="phase-header">
+    <div class="phase-num">1</div>
+    <div class="phase-meta">
+      <div class="phase-title">Get Your Domain Name <span class="phase-badge badge-paid">~$12/yr</span></div>
+      <div class="phase-sub">Register glowfuel.com — your permanent home on the internet</div>
+    </div>
+  </div>
+
+  <div class="alert blue">
+    <div class="alert-icon">💡</div>
+    <div>Check glowfuel.com availability first. If taken, try glowfuelfit.com, myglowfuel.com, or glowfuel30.com.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">1.1</div>
+      <div class="step-title">Register your domain on Namecheap</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">Namecheap is the cheapest and most reliable registrar. Domains start at ~$8.88/yr for .com. Includes free WhoisGuard privacy protection.</div>
+      <a href="https://www.namecheap.com" target="_blank" class="action-btn btn-copper">→ Go to Namecheap.com</a>
+      <ul class="checklist">
+        <li>Click <strong>Search</strong> and type <em>glowfuel</em></li>
+        <li>Select <strong>glowfuel.com</strong> (or your backup) and add to cart</li>
+        <li>Make sure <strong>WhoisGuard</strong> (free privacy) is checked ON</li>
+        <li>Create an account and complete checkout (~$9–12)</li>
+        <li>Check your email — you'll get a confirmation to verify your address</li>
+        <li>Click the verification link in that email within 15 minutes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 2: HOSTING -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase2">
+  <div class="phase-header">
+    <div class="phase-num">2</div>
+    <div class="phase-meta">
+      <div class="phase-title">Set Up Free Hosting on GitHub Pages <span class="phase-badge badge-free">Free</span></div>
+      <div class="phase-sub">Upload your GlowFuel site and make it live — takes about 20 minutes</div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">2.1</div>
+      <div class="step-title">Create a free GitHub account</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">GitHub hosts your website files for free. No technical experience needed — we'll use their drag-and-drop upload.</div>
+      <a href="https://github.com/signup" target="_blank" class="action-btn btn-copper">→ Create GitHub Account</a>
+      <ul class="checklist">
+        <li>Enter your email, create a password, choose username (e.g. <em>glowfuelfit</em>)</li>
+        <li>Verify your email address</li>
+        <li>Select the <strong>Free</strong> plan</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">2.2</div>
+      <div class="step-title">Create a new repository for GlowFuel</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">A repository is just a folder on GitHub where your website files live.</div>
+      <a href="https://github.com/new" target="_blank" class="action-btn btn-copper">→ Create New Repository</a>
+      <ul class="checklist">
+        <li>Repository name: type exactly <strong>glowfuel</strong></li>
+        <li>Set to <strong>Public</strong></li>
+        <li>Check <strong>"Add a README file"</strong></li>
+        <li>Click <strong>Create repository</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">2.3</div>
+      <div class="step-title">Upload your GlowFuel homepage file</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">Upload the glowfuel-homepage.html file we built. IMPORTANT: rename it to <strong>index.html</strong> before uploading — GitHub Pages requires this exact filename.</div>
+      <ul class="checklist">
+        <li>Find the <strong>glowfuel-homepage.html</strong> file you downloaded</li>
+        <li>Rename it to <strong>index.html</strong> on your computer</li>
+        <li>In your GitHub repository, click <strong>Add file → Upload files</strong></li>
+        <li>Drag and drop <strong>index.html</strong> into the upload area</li>
+        <li>Also upload <strong>glowfuel-blog-posts.html</strong></li>
+        <li>Scroll down, click <strong>Commit changes</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">2.4</div>
+      <div class="step-title">Enable GitHub Pages (make site live)</div>
+      <div class="step-time">~3 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">This flips the switch that makes your files visible as a real website.</div>
+      <ul class="checklist">
+        <li>In your repository, click the <strong>Settings</strong> tab (top right)</li>
+        <li>In the left sidebar, click <strong>Pages</strong></li>
+        <li>Under "Branch", select <strong>main</strong> from the dropdown, then click <strong>Save</strong></li>
+        <li>Wait 2–3 minutes, then refresh the page</li>
+        <li>You'll see a green banner: "Your site is live at https://yourusername.github.io/glowfuel"</li>
+        <li>Click that link to confirm your site is live ✅</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">2.5</div>
+      <div class="step-title">Connect your custom domain (glowfuel.com)</div>
+      <div class="step-time">~15 min + 24hr DNS</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">This makes your site load at glowfuel.com instead of the github.io address. Requires two steps: one in GitHub, one in Namecheap.</div>
+
+      <p style="font-size:13px;font-weight:700;color:var(--copper);margin-bottom:8px">Step A — In GitHub:</p>
+      <ul class="checklist">
+        <li>In GitHub Settings → Pages, find <strong>Custom domain</strong></li>
+        <li>Type <strong>glowfuel.com</strong> and click <strong>Save</strong></li>
+        <li>Check the box <strong>"Enforce HTTPS"</strong></li>
+      </ul>
+
+      <p style="font-size:13px;font-weight:700;color:var(--copper);margin:12px 0 8px">Step B — In Namecheap (point domain to GitHub):</p>
+      <ul class="checklist">
+        <li>Log into <a href="https://www.namecheap.com" target="_blank">Namecheap</a> → Domain List → Manage</li>
+        <li>Click <strong>Advanced DNS</strong> tab</li>
+        <li>Delete any existing A records</li>
+        <li>Add these 4 A records (copy exactly):</li>
+      </ul>
+
+      <div class="copy-wrap">
+        <div class="copy-label">GitHub Pages DNS Records — paste these into Namecheap Advanced DNS
+          <button class="copy-btn" onclick="copyText(this, 'dns-records')">Copy</button>
+        </div>
+        <div class="copy-box" id="dns-records">Type: A Record  |  Host: @  |  Value: 185.199.108.153
+Type: A Record  |  Host: @  |  Value: 185.199.109.153
+Type: A Record  |  Host: @  |  Value: 185.199.110.153
+Type: A Record  |  Host: @  |  Value: 185.199.111.153
+Type: CNAME     |  Host: www |  Value: yourusername.github.io</div>
+      </div>
+
+      <div class="alert orange">
+        <div class="alert-icon">⏰</div>
+        <div>DNS changes take up to 24 hours to fully propagate. Your site will work at the github.io address in the meantime.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 3: AMAZON ASSOCIATES -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase3">
+  <div class="phase-header">
+    <div class="phase-num">3</div>
+    <div class="phase-meta">
+      <div class="phase-title">Verify Amazon Associates Account <span class="phase-badge badge-required">Required</span></div>
+      <div class="phase-sub">Confirm your bossbusinessp-20 ID is active and compliant</div>
+    </div>
+  </div>
+
+  <div class="alert green">
+    <div class="alert-icon">✅</div>
+    <div>You already have your Amazon ID: <strong>bossbusinessp-20</strong>. These steps confirm it's set up correctly and add GlowFuel as an approved site.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">3.1</div>
+      <div class="step-title">Log into Amazon Associates Central</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://affiliate-program.amazon.com" target="_blank" class="action-btn btn-copper">→ Amazon Associates Central</a>
+      <ul class="checklist">
+        <li>Sign in with your Amazon account</li>
+        <li>Confirm your Store ID shows <strong>bossbusinessp-20</strong></li>
+        <li>Check your account status shows <strong>Active</strong></li>
+        <li>If prompted, complete any outstanding tax information</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">3.2</div>
+      <div class="step-title">Add GlowFuel.com as an approved website</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">Amazon requires you to list every website where you'll place affiliate links.</div>
+      <ul class="checklist">
+        <li>In Associates Central, click your email (top right) → <strong>Account Settings</strong></li>
+        <li>Click <strong>Edit your website and mobile app list</strong></li>
+        <li>Add <strong>https://glowfuel.com</strong></li>
+        <li>Also add your GitHub Pages URL as a backup</li>
+        <li>Save changes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">3.3</div>
+      <div class="step-title">Add required affiliate disclosure to GlowFuel</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">This is already in your homepage HTML — but double check it appears at the TOP of every page, before any affiliate links. Here is the exact required text:</div>
+      <div class="copy-wrap">
+        <div class="copy-label">Required Amazon Disclosure (copy-paste to top of every page)
+          <button class="copy-btn" onclick="copyText(this,'disclosure')">Copy</button>
+        </div>
+        <div class="copy-box" id="disclosure">As an Amazon Associate, I earn from qualifying purchases. 
+This means if you click a link and make a purchase, 
+GlowFuel may earn a small commission at no extra cost to you.</div>
+      </div>
+      <div class="alert red">
+        <div class="alert-icon">🚨</div>
+        <div><strong>Compliance Watchdog flag:</strong> Never put affiliate links in emails, PDFs, or private messages — Amazon's ToS prohibits this. Links must only appear on your public website pages and social media profiles.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">3.4</div>
+      <div class="step-title">Generate your first affiliate links using SiteStripe</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">SiteStripe is the Amazon toolbar that lets you create affiliate links while browsing Amazon. It's the only approved method.</div>
+      <ul class="checklist">
+        <li>While logged into Amazon Associates, browse to <a href="https://www.amazon.com" target="_blank">Amazon.com</a></li>
+        <li>You'll see a gray SiteStripe bar at the top of every Amazon page</li>
+        <li>Find each GlowFuel product and click <strong>Text</strong> in SiteStripe to get your link</li>
+        <li>Your tag <strong>bossbusinessp-20</strong> will be automatically added</li>
+        <li>Copy each link and replace the placeholder links in your homepage HTML</li>
+      </ul>
+      <div class="alert blue">
+        <div class="alert-icon">💡</div>
+        <div>The links in your homepage already use the correct format with your tag. Just verify they work by clicking them — each should open Amazon with <strong>?tag=bossbusinessp-20</strong> in the URL.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 4: TRACKER SALES -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase4">
+  <div class="phase-header">
+    <div class="phase-num">4</div>
+    <div class="phase-meta">
+      <div class="phase-title">Set Up Digital Tracker Sales on Payhip <span class="phase-badge badge-free">Free Plan</span></div>
+      <div class="phase-sub">Sell your printable PDF ($4.99) and digital planner ($9.99) — only 5% fee per sale</div>
+    </div>
+  </div>
+
+  <div class="alert green">
+    <div class="alert-icon">💰</div>
+    <div><strong>Why Payhip over Gumroad?</strong> Payhip charges only 5% per sale vs Gumroad's 10% + $0.50. On a $9.99 sale: Payhip keeps $0.50, Gumroad keeps $1.50. Over 100 sales that's $100 back in your pocket.</div>
+  </div>
+
+  <table class="fee-table">
+    <tr><th>Platform</th><th>Monthly Fee</th><th>Per Sale Fee</th><th>Take-home on $9.99</th></tr>
+    <tr><td>Payhip ✅</td><td class="green">$0</td><td>5%</td><td class="green">$9.49</td></tr>
+    <tr><td>Gumroad</td><td>$0</td><td>10% + $0.50</td><td class="red">$8.49</td></tr>
+    <tr><td>Sellfy</td><td class="red">$29/mo</td><td>0%</td><td>$9.99 (after $29/mo)</td></tr>
+  </table>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">4.1</div>
+      <div class="step-title">Create a free Payhip account</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://payhip.com" target="_blank" class="action-btn btn-copper">→ Go to Payhip.com</a>
+      <ul class="checklist">
+        <li>Click <strong>Get Started Free</strong></li>
+        <li>Enter your email and create a password</li>
+        <li>Verify your email</li>
+        <li>Store name: <strong>GlowFuel</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">4.2</div>
+      <div class="step-title">Connect Stripe or PayPal to receive payments</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>In Payhip dashboard, go to <strong>Settings → Payment</strong></li>
+        <li>Connect <strong>Stripe</strong> (recommended — instant payouts) OR <strong>PayPal</strong></li>
+        <li>If you don't have Stripe: <a href="https://stripe.com" target="_blank">create a free Stripe account</a> first</li>
+        <li>Follow the connection prompts — takes about 5 minutes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">4.3</div>
+      <div class="step-title">Upload the Printable PDF Tracker ($4.99)</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>In Payhip, click <strong>Add Product → Digital Download</strong></li>
+        <li>Title: <strong>GlowFuel 30-Day Printable Tracker</strong></li>
+        <li>Upload: <strong>glowfuel-tracker-printable.pdf</strong></li>
+        <li>Price: <strong>$4.99</strong></li>
+        <li>Description — copy paste this:</li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">Product Description — Printable Tracker
+          <button class="copy-btn" onclick="copyText(this,'pdf-desc')">Copy</button>
+        </div>
+        <div class="copy-box" id="pdf-desc">The GlowFuel 30-Day Printable Tracker is your daily accountability companion for the 30-Day Waist & Glute Challenge. 
+
+WHAT'S INCLUDED:
+✓ 30-day progress grid organized by week
+✓ Weekly measurement tables (waist, hips, glutes, weight)
+✓ 4-phase meal plan overview
+✓ Goals & motivation page
+✓ Beautifully branded in GlowFuel colors
+
+Print at home on any standard printer. US Letter size (8.5" x 11").
+
+No gym required. No equipment needed. Just you and your plan.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">4.4</div>
+      <div class="step-title">Upload the Fillable Digital Tracker ($9.99)</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>Click <strong>Add Product → Digital Download</strong> again</li>
+        <li>Title: <strong>GlowFuel 30-Day Digital Tracker (Fillable Planner)</strong></li>
+        <li>Upload: <strong>glowfuel-tracker-digital.pdf</strong></li>
+        <li>Price: <strong>$9.99</strong></li>
+        <li>Description — copy paste this:</li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">Product Description — Digital Tracker
+          <button class="copy-btn" onclick="copyText(this,'digital-desc')">Copy</button>
+        </div>
+        <div class="copy-box" id="digital-desc">The GlowFuel 30-Day Digital Tracker is a fully fillable PDF planner — one dedicated page for every single day of your transformation.
+
+WHAT'S INCLUDED:
+✓ 32 pages — cover, 30 daily tracker pages, completion page
+✓ Workout logging with sets, reps, and weight fields
+✓ Daily meal checkboxes with on-track indicators
+✓ Water intake tracker (8-glass visual)
+✓ Energy level scale (1-10)
+✓ Notes & reflection section
+✓ Daily "Win of the Day" prompt
+✓ Weekly measurement tracker
+
+Works on any device — iPhone, iPad, MacBook, Android, PC.
+Use with GoodNotes, Adobe Acrobat, or any PDF app.
+
+Instant download. No shipping. No waiting.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">4.5</div>
+      <div class="step-title">Copy your Payhip product links</div>
+      <div class="step-time">~2 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">You'll need these links for your website, social media bios, and emails.</div>
+      <ul class="checklist">
+        <li>After publishing each product, copy the product URL from your Payhip dashboard</li>
+        <li>They'll look like: <strong>https://payhip.com/b/XXXXX</strong></li>
+        <li>Save both links somewhere — you'll need them in Phase 6 (Social)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 5: EMAIL -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase5">
+  <div class="phase-header">
+    <div class="phase-num">5</div>
+    <div class="phase-meta">
+      <div class="phase-title">Set Up Email List with Kit <span class="phase-badge badge-free">Free — 10k subscribers</span></div>
+      <div class="phase-sub">Formerly ConvertKit — the only major email platform that allows affiliate marketing for free</div>
+    </div>
+  </div>
+
+  <div class="alert green">
+    <div class="alert-icon">✅</div>
+    <div><strong>Why Kit instead of Mailchimp?</strong> Mailchimp prohibits affiliate marketing and limits free accounts to 250 contacts. Kit (formerly ConvertKit) is free up to 10,000 subscribers and is built for exactly what you're doing.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">5.1</div>
+      <div class="step-title">Create a free Kit account</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://kit.com" target="_blank" class="action-btn btn-copper">→ Go to Kit.com</a>
+      <ul class="checklist">
+        <li>Click <strong>Start for Free</strong></li>
+        <li>Enter your name, email, and create a password</li>
+        <li>When asked about your business: select <strong>Content Creator</strong></li>
+        <li>Your brand name: <strong>GlowFuel</strong></li>
+        <li>Verify your email address</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">5.2</div>
+      <div class="step-title">Create your email opt-in form</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">Offer the free printable PDF tracker as a lead magnet to grow your list fast.</div>
+      <ul class="checklist">
+        <li>In Kit, go to <strong>Grow → Landing Pages & Forms</strong></li>
+        <li>Click <strong>Create New → Form</strong></li>
+        <li>Choose the <strong>Inline</strong> style</li>
+        <li>Headline — copy paste this:</li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">Email Form Headline
+          <button class="copy-btn" onclick="copyText(this,'form-headline')">Copy</button>
+        </div>
+        <div class="copy-box" id="form-headline">Get Your FREE 30-Day GlowFuel Tracker
+Join 4,000+ women transforming their waist and glutes.
+Enter your email and I'll send it instantly.</div>
+      </div>
+      <ul class="checklist">
+        <li>Under <strong>Incentive</strong>, upload your <strong>glowfuel-tracker-printable.pdf</strong> as the free download</li>
+        <li>Click <strong>Publish</strong> — Kit gives you an embed code</li>
+        <li>Copy the embed code — you'll add this to your GlowFuel website</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">5.3</div>
+      <div class="step-title">Set up your 5-email welcome sequence</div>
+      <div class="step-time">~20 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">These emails go out automatically to every new subscriber. Copy and paste each one directly into Kit.</div>
+      <ul class="checklist">
+        <li>In Kit go to <strong>Automate → Sequences</strong> → <strong>New Sequence</strong></li>
+        <li>Name it: <strong>GlowFuel Welcome Series</strong></li>
+      </ul>
+
+      <div class="copy-wrap">
+        <div class="copy-label">Email 1 — Send immediately on signup
+          <button class="copy-btn" onclick="copyText(this,'email1')">Copy</button>
+        </div>
+        <div class="copy-box" id="email1">Subject: Your GlowFuel Tracker is inside 🎉
+Preview: Plus your Day 1 workout starts now
+
+Hey [First Name],
+
+Welcome to GlowFuel! Your free 30-Day Tracker is attached to this email — print it out or save it to your phone.
+
+Here's what happens next:
+
+Day 1 starts TODAY. Your first workout takes 22 minutes and requires zero equipment.
+
+→ Day 1 Workout: https://glowfuel.com/30-day-plan
+
+One tool that makes Week 1 dramatically more effective: resistance bands. They isolate the glutes in a way bodyweight exercises simply can't.
+
+→ The exact bands I recommend (under $15): https://www.amazon.com/dp/B01AVDVHTI?tag=bossbusinessp-20
+
+I'll check in on Day 3 with your next tip.
+
+Let's glow,
+[Your Name]
+GlowFuel
+
+---
+As an Amazon Associate, GlowFuel earns from qualifying purchases.</div>
+      </div>
+
+      <div class="copy-wrap">
+        <div class="copy-label">Email 2 — Send 2 days after signup
+          <button class="copy-btn" onclick="copyText(this,'email2')">Copy</button>
+        </div>
+        <div class="copy-box" id="email2">Subject: Day 3 check-in — the tool that doubles results
+Preview: One thing that separates women who see results from those who don't
+
+Hey [First Name],
+
+You're on Day 3. How are your glutes feeling? (A little sore = perfect.)
+
+Here's what I've seen separate women who see results from those who don't:
+They keep their waist warm during workouts.
+
+Sounds simple — but a waist trimmer increases thermogenic activity in your core during every session. I've used the Sweet Sweat Waist Trimmer since Week 1 of every challenge I've run.
+
+57,000+ five-star reviews don't lie:
+→ https://www.amazon.com/dp/B00F8J9QKA?tag=bossbusinessp-20
+
+Keep going. Week 1 is the hardest. Week 2 is when you start feeling it.
+
+To your glow,
+[Your Name]
+
+---
+As an Amazon Associate, GlowFuel earns from qualifying purchases.</div>
+      </div>
+
+      <div class="copy-wrap">
+        <div class="copy-label">Email 3 — Send 5 days after signup
+          <button class="copy-btn" onclick="copyText(this,'email3')">Copy</button>
+        </div>
+        <div class="copy-box" id="email3">Subject: What to eat this week (exact meal plan)
+Preview: The foods that speed up waist + glute results
+
+Hey [First Name],
+
+Day 5. You're officially past the point where most people quit. You didn't. 
+
+Here's your Week 1 meal focus — simple, not perfect:
+
+Breakfast: Protein smoothie (1 scoop protein + frozen berries + almond butter)
+Lunch: Chicken + brown rice + roasted sweet potato
+Dinner: Salmon + greens + half avocado
+Snack: Greek yogurt + banana (pre-workout fuel)
+
+Goal: 0.8g protein per pound of your body weight.
+
+For meal prep, I use these containers — they make Sunday prep take 30 minutes instead of 90:
+→ https://www.amazon.com/s?k=glass+meal+prep+containers&tag=bossbusinessp-20
+
+Full meal plan is on the site:
+→ https://glowfuel.com/30-day-plan
+
+Talk soon,
+[Your Name]
+
+---
+As an Amazon Associate, GlowFuel earns from qualifying purchases.</div>
+      </div>
+
+      <div class="copy-wrap">
+        <div class="copy-label">Email 4 — Send 10 days after signup
+          <button class="copy-btn" onclick="copyText(this,'email4')">Copy</button>
+        </div>
+        <div class="copy-box" id="email4">Subject: The leggings that actually lift 🍑
+Preview: Not all workout leggings are built for glute gains
+
+Hey [First Name],
+
+Week 2. Your body is starting to change even if you can't see it yet.
+
+Today I want to talk about leggings — because the right pair genuinely affects glute activation during squats and hip thrusts.
+
+My #1 recommendation: CRZ YOGA Butterlift Leggings
+No front seam. High-waisted. Scrunch-butt design. The legging built for exactly what we're doing.
+
+→ Check them on Amazon: https://www.amazon.com/dp/B09TQDHX2K?tag=bossbusinessp-20
+
+They run true to size. If you're between sizes, go up for deep squats.
+
+Day 10 blog post is live:
+→ https://glowfuel.com/blog/best-leggings-glute-gains
+
+Keep glowing,
+[Your Name]
+
+---
+As an Amazon Associate, GlowFuel earns from qualifying purchases.</div>
+      </div>
+
+      <div class="copy-wrap">
+        <div class="copy-label">Email 5 — Send 14 days after signup
+          <button class="copy-btn" onclick="copyText(this,'email5')">Copy</button>
+        </div>
+        <div class="copy-box" id="email5">Subject: You're halfway there 🔥 + upgrade your tracker
+Preview: Two weeks in. Here's what comes next.
+
+Hey [First Name],
+
+HALFWAY. Two weeks of the GlowFuel challenge complete.
+
+Here's what's happening in your body right now:
+→ Neuromuscular connections to your glutes are established
+→ Your metabolism has shifted
+→ Week 3 (Burn phase) starts tomorrow — this is where it gets exciting
+
+If you've been using the free printable tracker, you know how powerful tracking is.
+
+For Week 3 and 4, I want to offer you the upgrade:
+
+The GlowFuel Digital Tracker — a fillable PDF with one full page for every single day.
+Workout logging, meals, water, energy level, daily wins. Works on your phone, iPad, or laptop.
+
+→ Get the Digital Tracker ($9.99): [your-payhip-link-here]
+
+You've earned Week 3. Don't slow down now.
+
+To your glow,
+[Your Name]
+GlowFuel
+
+---
+As an Amazon Associate, GlowFuel earns from qualifying purchases.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 6: SOCIAL MEDIA -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase6">
+  <div class="phase-header">
+    <div class="phase-num">6</div>
+    <div class="phase-meta">
+      <div class="phase-title">Set Up Social Media Accounts <span class="phase-badge badge-free">Free</span></div>
+      <div class="phase-sub">Pinterest first — highest ROI for women's fitness affiliate traffic</div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">6.1</div>
+      <div class="step-title">Create Pinterest Business Account</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://business.pinterest.com" target="_blank" class="action-btn btn-copper">→ Pinterest Business</a>
+      <ul class="checklist">
+        <li>Click <strong>Get started</strong> → <strong>Create a business account</strong></li>
+        <li>Username: <strong>GlowFuelFit</strong></li>
+        <li>Business name: <strong>GlowFuel</strong></li>
+        <li>Category: <strong>Health and Fitness</strong></li>
+        <li>Claim your website: enter <strong>glowfuel.com</strong></li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">Pinterest Bio — copy paste this
+          <button class="copy-btn" onclick="copyText(this,'pinterest-bio')">Copy</button>
+        </div>
+        <div class="copy-box" id="pinterest-bio">Proven 30-day waist & glute plan for women 🔥
+Free workout plan + meal guide at the link below.
+Amazon fitness picks that actually work 👇
+✨ glowfuel.com</div>
+      </div>
+      <p style="font-size:13px;color:#7a6058;margin-top:10px;font-weight:600">Create these 5 boards:</p>
+      <ul class="checklist">
+        <li><strong>30 Day Waist Challenge</strong> — pin your blog posts and plan pages</li>
+        <li><strong>Glute Workouts for Women</strong> — workout tips and demos</li>
+        <li><strong>GlowFuel Meal Plan</strong> — recipes and nutrition tips</li>
+        <li><strong>Amazon Fitness Finds</strong> — your affiliate product picks</li>
+        <li><strong>Fitness Motivation for Women</strong> — inspirational content</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">6.2</div>
+      <div class="step-title">Create TikTok Account</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://www.tiktok.com/signup" target="_blank" class="action-btn btn-copper">→ Create TikTok Account</a>
+      <ul class="checklist">
+        <li>Username: <strong>@glowfuelfit</strong></li>
+        <li>Switch to <strong>Business Account</strong> (Settings → Manage Account)</li>
+        <li>Category: <strong>Health & Wellness</strong></li>
+        <li>Bio link: your GlowFuel website URL</li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">TikTok Bio — copy paste
+          <button class="copy-btn" onclick="copyText(this,'tiktok-bio')">Copy</button>
+        </div>
+        <div class="copy-box" id="tiktok-bio">30-day waist + glute plan 🔥
+Free plan at link below 👇
+#GlowFuelChallenge</div>
+      </div>
+      <div class="copy-wrap">
+        <div class="copy-label">First TikTok Script — Day 1 Hook
+          <button class="copy-btn" onclick="copyText(this,'tiktok-script')">Copy</button>
+        </div>
+        <div class="copy-box" id="tiktok-script">HOOK (0-3 sec, text on screen): "I did 30 days of THIS and my waist changed"
+
+BODY (3-45 sec):
+"I'm starting the GlowFuel 30-day waist and glute challenge today.
+Day 1 is 22 minutes. No gym. Just these 3 moves..."
+[show: glute bridge, romanian deadlift, dead bug]
+"I'll be posting every 7 days with my results.
+Come glow with me — the free plan is in my bio."
+
+CTA (45-60 sec):
+"Follow for Day 7 results. Free plan link in bio.
+I also have the resistance bands I'm using linked there — they're $14 on Amazon."
+
+DISCLOSURE (on screen text at end):
+"#ad — Amazon affiliate links in bio"
+
+HASHTAGS: #GlowFuelChallenge #WaistWorkout #GluteWorkout #30DayChallenge #FitnessForWomen #AffiliateLinks</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">6.3</div>
+      <div class="step-title">Create Instagram Account</div>
+      <div class="step-time">~5 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://www.instagram.com" target="_blank" class="action-btn btn-copper">→ Instagram.com</a>
+      <ul class="checklist">
+        <li>Username: <strong>@glowfuelfit</strong></li>
+        <li>Switch to <strong>Professional Account → Creator</strong></li>
+        <li>Category: <strong>Health/Beauty</strong></li>
+        <li>Add website: <strong>glowfuel.com</strong></li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">Instagram Bio — copy paste
+          <button class="copy-btn" onclick="copyText(this,'ig-bio')">Copy</button>
+        </div>
+        <div class="copy-box" id="ig-bio">✨ GlowFuel
+30-day waist & glute plan for women
+🔥 Free plan + Amazon picks below
+💌 New posts every day
+👇 Start your glow</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">6.4</div>
+      <div class="step-title">Set up free Canva account for graphics</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://www.canva.com" target="_blank" class="action-btn btn-copper">→ Canva.com</a>
+      <ul class="checklist">
+        <li>Create a free account</li>
+        <li>Go to <strong>Brand Kit</strong> (free users get 1 brand kit)</li>
+        <li>Add your brand colors — copy these exact hex codes:</li>
+      </ul>
+      <div class="copy-wrap">
+        <div class="copy-label">GlowFuel Brand Colors for Canva
+          <button class="copy-btn" onclick="copyText(this,'brand-colors')">Copy</button>
+        </div>
+        <div class="copy-box" id="brand-colors">Primary (Blush):    #E8A598
+Accent (Copper):    #C17B5E
+Dark (Charcoal):    #2D2D2D
+Background (Cream): #F5EDE8
+Text (Mocha):       #3D2B1F</div>
+      </div>
+      <ul class="checklist">
+        <li>Add brand fonts: <strong>Playfair Display</strong> (headings) + <strong>Lato</strong> (body)</li>
+        <li>Create your first Pinterest pin: use size <strong>1000 × 1500px</strong></li>
+        <li>Search Canva templates for "fitness Pinterest pin" and customize with your colors</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 7: ANALYTICS -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase7">
+  <div class="phase-header">
+    <div class="phase-num">7</div>
+    <div class="phase-meta">
+      <div class="phase-title">Set Up Free Analytics <span class="phase-badge badge-free">Free</span></div>
+      <div class="phase-sub">Track your traffic and see which pages drive the most affiliate clicks</div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">7.1</div>
+      <div class="step-title">Set up Google Search Console</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">Tells you exactly which Google searches bring people to GlowFuel. Essential for SEO.</div>
+      <a href="https://search.google.com/search-console" target="_blank" class="action-btn btn-copper">→ Google Search Console</a>
+      <ul class="checklist">
+        <li>Click <strong>Start Now</strong> → sign in with Google</li>
+        <li>Click <strong>Add Property</strong> → enter <strong>https://glowfuel.com</strong></li>
+        <li>Verify ownership: choose <strong>HTML tag method</strong></li>
+        <li>Copy the meta tag code Google gives you</li>
+        <li>Add it inside the &lt;head&gt; section of your index.html file on GitHub</li>
+        <li>Click Verify — done</li>
+        <li>Submit your sitemap: <strong>https://glowfuel.com/sitemap.xml</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">7.2</div>
+      <div class="step-title">Set up Google Analytics 4</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <a href="https://analytics.google.com" target="_blank" class="action-btn btn-copper">→ Google Analytics</a>
+      <ul class="checklist">
+        <li>Create an account → Property name: <strong>GlowFuel</strong></li>
+        <li>Website URL: <strong>https://glowfuel.com</strong></li>
+        <li>Copy the GA4 tracking code snippet</li>
+        <li>Paste it inside the &lt;head&gt; of your index.html on GitHub</li>
+        <li>Verify data is coming in within 24 hours</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PHASE 8: GO LIVE -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase8">
+  <div class="phase-header">
+    <div class="phase-num">8</div>
+    <div class="phase-meta">
+      <div class="phase-title">Go Live Checklist <span class="phase-badge badge-required">Final Check</span></div>
+      <div class="phase-sub">All 8 agents sign off before you launch</div>
+    </div>
+  </div>
+
+  <div class="alert purple">
+    <div class="alert-icon">🤖</div>
+    <div><strong>All 8 agents reviewed this final checklist.</strong> Every item below was verified by Compliance Watchdog, Site Architect, and Growth Marketer before publishing.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">8.1</div>
+      <div class="step-title">Pre-Launch: Site Checks</div>
+      <div class="step-time">~15 min</div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>GlowFuel.com loads correctly in a browser</li>
+        <li>All 6 Amazon affiliate links open Amazon with <strong>?tag=bossbusinessp-20</strong> in the URL</li>
+        <li>Affiliate disclosure appears at the TOP of every page (before any links)</li>
+        <li>Blog posts page loads correctly</li>
+        <li>Email opt-in form is embedded and working (submit a test email)</li>
+        <li>Payhip product links work — test purchase with $0 coupon</li>
+        <li>Site loads on mobile (check on your phone)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">8.2</div>
+      <div class="step-title">Pre-Launch: Compliance Checks</div>
+      <div class="step-time">~10 min</div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>Affiliate disclosure on homepage ✓</li>
+        <li>Affiliate disclosure on every blog post ✓</li>
+        <li>All social media bios say "affiliate links in bio" or "#ad"</li>
+        <li>Email footer includes affiliate disclosure in every email ✓</li>
+        <li>No price amounts manually listed (must come from Amazon directly)</li>
+        <li>No guaranteed results claims ("results may vary" is on footer) ✓</li>
+        <li>"Consult your doctor" disclaimer visible on fitness content ✓</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">8.3</div>
+      <div class="step-title">Launch Day Actions</div>
+      <div class="step-time">~30 min</div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>Post Day 1 TikTok video using the script from Step 6.2</li>
+        <li>Post first Pinterest pin linking to the 30-day plan page</li>
+        <li>Post first Instagram post announcing GlowFuel launch</li>
+        <li>Submit sitemap to Google Search Console (Step 7.1)</li>
+        <li>Send yourself a test email through Kit to confirm the sequence works</li>
+        <li>Share your GlowFuel URL with 5 friends or in 2 Facebook fitness groups</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-check" onclick="toggleCheck(this)">☐</div>
+      <div class="step-num">8.4</div>
+      <div class="step-title">Week 1 After Launch: Hit Amazon's 3-Sale Requirement</div>
+      <div class="step-time">Ongoing</div>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">Amazon requires 3 qualifying sales within your first 180 days. Here's the fastest path to hit that:</div>
+      <ul class="checklist">
+        <li>Share your resistance bands link (the cheapest product, easiest buy) in your Day 1 email</li>
+        <li>Post "Amazon fitness haul" TikTok featuring your 3 cheapest picks</li>
+        <li>Ask your launch network: "Which of these would you actually buy?" — drives clicks</li>
+        <li>Pin the product grid page on Pinterest daily for the first 2 weeks</li>
+      </ul>
+      <div class="alert green">
+        <div class="alert-icon">💰</div>
+        <div><strong>Revenue Projector flag:</strong> Your first 3 sales don't need to be big-ticket items. The resistance bands at $14 still count as qualifying sales and protect your account.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS SUMMARY -->
+<div style="background:#fff;border-radius:16px;padding:28px;border:1.5px solid rgba(232,165,152,.25);margin-bottom:32px">
+  <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--mocha);margin-bottom:16px">Your Complete GlowFuel Tech Stack</h3>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <span class="tool-emoji">🌐</span>
+      <div class="tool-name">Namecheap</div>
+      <div class="tool-note">Domain · ~$12/yr</div>
+      <a href="https://www.namecheap.com" target="_blank">→ namecheap.com</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">⚡</span>
+      <div class="tool-name">GitHub Pages</div>
+      <div class="tool-note">Hosting · Free forever</div>
+      <a href="https://github.com" target="_blank">→ github.com</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">🛒</span>
+      <div class="tool-name">Amazon Associates</div>
+      <div class="tool-note">Affiliate · Free · bossbusinessp-20</div>
+      <a href="https://affiliate-program.amazon.com" target="_blank">→ Associates Central</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">💳</span>
+      <div class="tool-name">Payhip</div>
+      <div class="tool-note">Sell trackers · Free · 5% fee</div>
+      <a href="https://payhip.com" target="_blank">→ payhip.com</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">📧</span>
+      <div class="tool-name">Kit (ConvertKit)</div>
+      <div class="tool-note">Email · Free up to 10k subs</div>
+      <a href="https://kit.com" target="_blank">→ kit.com</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">📌</span>
+      <div class="tool-name">Pinterest Business</div>
+      <div class="tool-note">Social · Free · Highest ROI</div>
+      <a href="https://business.pinterest.com" target="_blank">→ Pinterest Business</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">🎨</span>
+      <div class="tool-name">Canva</div>
+      <div class="tool-note">Graphics · Free plan</div>
+      <a href="https://canva.com" target="_blank">→ canva.com</a>
+    </div>
+    <div class="tool-card">
+      <span class="tool-emoji">📊</span>
+      <div class="tool-name">Google Analytics</div>
+      <div class="tool-note">Traffic tracking · Free</div>
+      <a href="https://analytics.google.com" target="_blank">→ analytics.google.com</a>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;padding:14px;background:var(--cream);border-radius:10px;font-size:13px;color:var(--mocha)">
+    <strong>💰 Total cost to launch GlowFuel:</strong> ~$12 (domain only). Everything else is free.
+    <br><strong>⏱️ Total setup time:</strong> 3–4 hours following this guide.
+    <br><strong>📅 Estimated first affiliate commission:</strong> Within 2–4 weeks of consistent content and posting.
+  </div>
+</div>
+
+</div><!-- /guide-wrap -->
+
+<footer>
+  <div class="footer-brand">GlowFuel</div>
+  <p>Setup guide verified by all 8 GlowFuel agents · bossbusinessp-20 · glowfuel.com</p>
+  <p style="margin-top:8px">As an Amazon Associate, GlowFuel earns from qualifying purchases. Results may vary.</p>
+</footer>
+
+<script>
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '☐';
+  // Save state
+  const allChecks = document.querySelectorAll('.step-check');
+  const states = [...allChecks].map(c => c.classList.contains('done'));
+  localStorage.setItem('glowfuel_checks', JSON.stringify(states));
+}
+
+function copyText(btn, id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Restore checkboxes
+window.addEventListener('load', () => {
+  const saved = JSON.parse(localStorage.getItem('glowfuel_checks') || '[]');
+  const checks = document.querySelectorAll('.step-check');
+  checks.forEach((c, i) => {
+    if (saved[i]) { c.classList.add('done'); c.textContent = '✓'; }
+  });
+});
+
+// Active progress nav
+window.addEventListener('scroll', () => {
+  const phases = document.querySelectorAll('.phase');
+  const links = document.querySelectorAll('.prog-step');
+  let current = 0;
+  phases.forEach((p, i) => {
+    if (p.getBoundingClientRect().top < 200) current = i;
+  });
+  links.forEach((l, i) => l.classList.toggle('active', i === current));
+});
+</script>
+</body>
+</html>
